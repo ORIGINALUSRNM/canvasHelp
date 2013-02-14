@@ -11,6 +11,7 @@
 		ctx.moveTo(line.start.x, line.start.y);
 		ctx.lineTo(line.end.x, line.end.y);
 		ctx.lineWidth = line.lineWidth || 1;
+		ctx.lineCap = line.lineCap || "butt";
 		ctx.strokeStyle = line.strokeStyle || '#000000';
 		ctx.stroke();
 		ctx.closePath();
