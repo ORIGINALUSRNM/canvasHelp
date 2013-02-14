@@ -10,6 +10,13 @@
 		ctx.beginPath();
 		ctx.moveTo(line.start.x, line.start.y);
 		ctx.lineTo(line.end.x, line.end.y);
+		//set options properties
+		for(prop in line.options){
+			//only set properties defined natively on canvas context
+			if(ctx[prop]){
+				ctx[prop] = line.options[prop];
+			}
+		}
 		ctx.stroke();
 		ctx.closePath();
 	};
@@ -22,10 +29,21 @@
 		this.y = y;
 	};
 
-	var Line = function( start, end ) {
+	var Line = function( start, end, options ) {
 		if(!(this instanceof Line)){
-			return new canvasHelp.Line( start, end );
+			return new canvasHelp.Line( start, end, options);
 		}
+
+		if(options){
+			this.options = {};
+			for(prop in options){
+				if(options.hasOwnProperty(prop)){
+					this.options[prop] = options[prop];
+				}
+			}
+
+		}
+
 		this.start = start;
 		this.end = end;
 	}
@@ -37,6 +55,6 @@
 		Line : Line
 	};
 
-	window.canvasHelp = $ch = canvasHelp;
+	window.canvasHelp = $can = canvasHelp;
 
 })();
