@@ -4,6 +4,19 @@
 
 	var getContext = function(canvasId) {
 		var canvas = document.getElementById(canvasId);
+		////////////////////////////////////////////////////////////////////////////
+		//if width and height are not set on element, set them to default 300x150 //
+		//to ensure canvas dimensions and drawing surface dimensions are the same.//
+		//ignore css settings, they are confusing and unnecessary.                // 
+		////////////////////////////////////////////////////////////////////////////
+		if(!$(canvas).attr('width')){
+			$(canvas).attr('width', 300);
+			$(canvas).css('width', 300);
+		}
+		if(!$(canvas).attr('height')){
+			$(canvas).attr('height', 150);
+			$(canvas).css('height', 150);
+		}
 		return canvas.getContext('2d');
 	};
 	var drawLine = function( ctx, line ) { 

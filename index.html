@@ -5,8 +5,8 @@
 	 <script src="canvasHelp.js"></script>
 	 <style type="text/css">
 	 	canvas {
-	 		width:600px;
-	 		height:300px;
+	 		nowidth:600px;
+	 		noheight:300px;
 	 		border:1px solid #000;
 	 	}
 	 </style>
@@ -19,11 +19,10 @@
 //task: create a utility class that allows you to create a destination and trajectory to animate a
 //canvas object. Point a to point b, at certain speed, with certain easing, and with certain path. 
 $(function(){
-	var canvas = document.getElementById('jasonCanvas');
-	var ctx = canvas.getContext('2d');
+	var ctx = $can.getContext('jasonCanvas');
 
-	var x = new $can.Point(100,100);
-	var y = new $can.Point(100,200);
+	var x = new $can.Point(100,0);
+	var y = new $can.Point(100,300);
 
 	var line = $can.Line(x, y);
 
