@@ -3,9 +3,16 @@
 <head>
 	 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	 <script src="canvasHelp.js"></script>
+	 <style type="text/css">
+	 	canvas {
+	 		width:600px;
+	 		height:300px;
+	 		border:1px solid #000;
+	 	}
+	 </style>
 </head>
 <body>
-<canvas id="jasonCanvas" width="500" height="300">
+<canvas id="jasonCanvas" width="600" height="300">
 
 </canvas>
 <script type="text/javascript">
@@ -14,11 +21,17 @@
 $(function(){
 	var canvas = document.getElementById('jasonCanvas');
 	var ctx = canvas.getContext('2d');
+
+	var x = new $can.Point(100,100);
+	var y = new $can.Point(100,200);
+
+	var line = $can.Line(x, y);
+
+	$can.drawLine(ctx, line);
 	
 	
 });
 
 </script>
-
 </body>
 </html>
