@@ -29,6 +29,7 @@
 	</section>
 	<section id="app">
 		<canvas id="jasonCanvas" width="600" height="300"></canvas>
+		<canvas id="jasonCanvas2" width="600" height="300"></canvas>
 	<div class="canvas-coords"></div>
 	</section>
 	<section id="snapGallery">
@@ -87,7 +88,7 @@ $(function(){
 		}
 	};
 
-	var animate = function(){
+	/*var animate = function(){
 		if(RUNNING){
 			updateCircles();
 			ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -95,7 +96,7 @@ $(function(){
 			drawCircles(ctx);
 			setTimeout(animate, 30);
 		}
-	};
+	};*/
 
 	var updateCircles = function(){
 		for(var i = 0; i < circles.length; i++){
@@ -126,6 +127,10 @@ $(function(){
 	var c7 = circles[6];
 	var c8 = circles[7];
 	var c9 = circles[6];
+
+	for(var i = 0; i < circles.length; i++){
+		$can.canvases[canvas].push(circles[i]);
+	}
 
 	c1.addTrajectory(new $can.Trajectory( c1, 400, 280));
 	c2.addTrajectory(new $can.Trajectory( c2, 300, 100));

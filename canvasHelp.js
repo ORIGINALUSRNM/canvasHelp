@@ -2,6 +2,8 @@
 
 	var canvasHelp;
 
+	var canvasList = {};
+
 	var windowToCanvas = function(canvas, x, y) {
 		var bbox = canvas.getBoundingClientRect(); 
 		return { x: x - bbox.left * (canvas.width / bbox.width),
@@ -11,20 +13,30 @@
 
 	var getContext = function(canvasId) {
 		var canvas = document.getElementById(canvasId);
-		////////////////////////////////////////////////////////////////////////////
-		//if width and height are not set on element, set them to default 300x150 //
-		//to ensure canvas dimensions and drawing surface dimensions are the same.//
-		//ignore css settings, they are confusing and unnecessary.                // 
-		////////////////////////////////////////////////////////////////////////////
-		if(!$(canvas).attr('width')){
-			$(canvas).attr('width', 300);
-			$(canvas).css('width', 300);
+		var ctx;
+		if(canvas){
+			////////////////////////////////////////////////////////////////////////////
+			//if width and height are not set on element, set them to default 300x150 //
+			//to ensure canvas dimensions and drawing surface dimensions are the same.//
+			//ignore css settings, they are confusing and unnecessary.                // 
+			////////////////////////////////////////////////////////////////////////////
+			if(!$(canvas).attr('width')){
+				$(canvas).attr('width', 300);
+				$(canvas).css('width', 300);
+			}
+			if(!$(canvas).attr('height')){
+				$(canvas).attr('height', 150);
+				$(canvas).css('height', 150);
+			}
+			ctx = canvas.getContext('2d');
+			canvasList[canvas.id] = { "context" : ctx,
+									  "objects" : [] 
+									};
+
+			return ctx;
+		}else{
+			return null;
 		}
-		if(!$(canvas).attr('height')){
-			$(canvas).attr('height', 150);
-			$(canvas).css('height', 150);
-		}
-		return canvas.getContext('2d');
 	};
 
 	var inherit = function( Child, Parent ){
@@ -154,7 +166,29 @@
 
 	inherit(Circle, Shape);
 
+	var updateObjects = function(ctx) {
+		var id = ctx.canvas.id;
+		var objects = canvasList[id].objects;
+		for(var i = 0; i < objects.length; i++){
+			var o = objects[i];
+			if(o.trajectory){
+				o.updateTrajectory();
+			}
+		}
+	};
+
+	var animate = function(ctx) {
+		if(RUNNING){
+			updateObjects(ctx);
+			ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+			//drawBackground(ctx);
+			//drawCircles(ctx);
+			//setTimeout(animate, 30);
+		}
+	};
+
 	canvasHelp = {
+		canvases : canvases,
 		getContext : getContext,
 		windowToCanvas : windowToCanvas,
 		drawLine : drawLine, 
