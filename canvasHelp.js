@@ -115,7 +115,7 @@
 		if(!(this instanceof Line)){
 			return new canvasHelp.Line( start, end, options);
 		}
-		
+
 		if(options){
 			for(prop in options){
 				if(options.hasOwnProperty(prop)){
@@ -135,6 +135,15 @@
 		this.radius = radius;
 		this.fillStyle = fillStyle;
 		this.trajectory = false;
+
+		this.draw = function ( ctx ) {
+			ctx.save();
+			ctx.fillStyle = this.fillStyle;
+			ctx.beginPath();
+			ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2, false);
+			ctx.fill();
+			ctx.restore();
+		};
 
 		this.addTrajectory = function(trajectory){
 			this.trajectory = trajectory;

@@ -83,12 +83,7 @@ $(function(){
 	var drawCircles = function(){
 		for(var i = 0; i < circles.length; i++){
 			var c = circles[i];
-			ctx.save();
-			ctx.fillStyle = c.fillStyle;
-			ctx.beginPath();
-			ctx.arc(c.x, c.y, c.radius, 0, Math.PI*2, false);
-			ctx.fill();
-			ctx.restore();
+			c.draw(ctx);
 		}
 	};
 
@@ -118,6 +113,9 @@ $(function(){
 	circles.push(new $can.Circle(210, 10, 10, "#cc6789"));
 	circles.push(new $can.Circle(420, 40, 70, "#ccc11a"));
 	circles.push(new $can.Circle(50, 30, 190, "#444789"));
+	circles.push(new $can.Circle(110, 30, 10, "#cc6111"));
+	circles.push(new $can.Circle(220, 42, 70, "#cccacc"));
+	circles.push(new $can.Circle(70, 34, 19, "#444000"));
 
 	var c1 = circles[0];
 	var c2 = circles[1];
@@ -125,6 +123,9 @@ $(function(){
 	var c4 = circles[3];
 	var c5 = circles[4];
 	var c6 = circles[5];
+	var c7 = circles[6];
+	var c8 = circles[7];
+	var c9 = circles[6];
 
 	c1.addTrajectory(new $can.Trajectory( c1, 400, 280));
 	c2.addTrajectory(new $can.Trajectory( c2, 300, 100));
@@ -132,6 +133,9 @@ $(function(){
 	c4.addTrajectory(new $can.Trajectory( c4, 100, 380));
 	c5.addTrajectory(new $can.Trajectory( c5, 30, 10));
 	c6.addTrajectory(new $can.Trajectory( c6, 30, 220));
+	c7.addTrajectory(new $can.Trajectory( c7, 10, 30));
+	c8.addTrajectory(new $can.Trajectory( c8, 160, 50));
+	c9.addTrajectory(new $can.Trajectory( c9, 10, 70));
 	
 	$('#animate').on("click", function(){
 		RUNNING = RUNNING ? false : true;
