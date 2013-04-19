@@ -4,30 +4,143 @@
 	 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	 <script src="canvasHelp.js"></script>
 	 <style type="text/css">
+	 	body {
+	 		background-color:#000;
+	 	}
+	 	#app {
+	 		margin:50px auto;
+	 		width:600px;
+	 	}
 	 	canvas {
-	 		nowidth:600px;
-	 		noheight:300px;
-	 		border:1px solid #000;
+	 		border:1px solid #05ea45;
+	 	}
+	 	img {
+	 		width:100px;
+	 	}
+	 	.canvas-coords {
+	 		color:#05ea45;
 	 	}
 	 </style>
 </head>
 <body>
-<canvas id="jasonCanvas" width="600" height="300">
-
-</canvas>
+	<section>
+		<button id="snapshot">Take Snapshot!</button>
+		<button id="animate">animate</button>
+	</section>
+	<section id="app">
+		<canvas id="jasonCanvas" width="600" height="300"></canvas>
+	<div class="canvas-coords"></div>
+	</section>
+	<section id="snapGallery">
+	</section>
+	
 <script type="text/javascript">
 //task: create a utility class that allows you to create a destination and trajectory to animate a
 //canvas object. Point a to point b, at certain speed, with certain easing, and with certain path. 
 $(function(){
+	var RUNNING = false;
 	var ctx = $can.getContext('jasonCanvas');
+	var canvas = ctx.canvas;
+	window.ctx = ctx;
+	var BG_COLOR = "orange";
+	var circles = [];
 
-	var x = new $can.Point(100,0);
-	var y = new $can.Point(100,300);
+	var drawBackground = function(){
+		ctx.fillStyle = BG_COLOR;
+		ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+	};
 
-	var line = $can.Line(x, y);
+
+	var x = new $can.Point(0,0);
+	var y = new $can.Point(300,150);
+	var line = $can.Line(x, y, { strokeStyle :'#05ea45'});
+
+	/*
+
+	var gradient = ctx.createLinearGradient(0,0, canvas.width, 0);
+	gradient.addColorStop(0, '#000000');
+	gradient.addColorStop(0.5, '#ffffff');
+	gradient.addColorStop(1, '#000000');
+
+	ctx.fillStyle = gradient;
+	ctx.fillRect(0,0, canvas.width, canvas.height);
 
 	$can.drawLine(ctx, line);
+	*/
+
+	$('#jasonCanvas').on('mousemove', function(e){
+		var canvasPoint = $can.windowToCanvas(ctx.canvas, e.pageX, e.pageY);
+		$('.canvas-coords').html( canvasPoint.x + ", " + canvasPoint.y);
+	});
+
+	var takeSnap = function(){
+		var dataUrl = ctx.canvas.toDataURL();
+		var snap = $('<img>');
+		$(snap).prop("src", dataUrl);
+		$('#snapGallery').append(snap);
+	};
+
+	var drawCircles = function(){
+		for(var i = 0; i < circles.length; i++){
+			var c = circles[i];
+			ctx.save();
+			ctx.fillStyle = c.fillStyle;
+			ctx.beginPath();
+			ctx.arc(c.x, c.y, c.radius, 0, Math.PI*2, false);
+			ctx.fill();
+			ctx.restore();
+		}
+	};
+
+	var animate = function(){
+		if(RUNNING){
+			updateCircles();
+			ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+			drawBackground(ctx);
+			drawCircles(ctx);
+			setTimeout(animate, 30);
+		}
+	};
+
+	var updateCircles = function(){
+		for(var i = 0; i < circles.length; i++){
+			var c = circles[i];
+			if(c.trajectory){
+				c.updateTrajectory();
+			}
+		}
+
+	};
+
+	circles.push(new $can.Circle(20, 20, 10, "#456789"));
+	circles.push(new $can.Circle(120, 20, 50, "#ccc789"));
+	circles.push(new $can.Circle(70, 20, 90, "#006789"));
+	circles.push(new $can.Circle(210, 10, 10, "#cc6789"));
+	circles.push(new $can.Circle(420, 40, 70, "#ccc11a"));
+	circles.push(new $can.Circle(50, 30, 190, "#444789"));
+
+	var c1 = circles[0];
+	var c2 = circles[1];
+	var c3 = circles[2];
+	var c4 = circles[3];
+	var c5 = circles[4];
+	var c6 = circles[5];
+
+	c1.addTrajectory(new $can.Trajectory( c1, 400, 280));
+	c2.addTrajectory(new $can.Trajectory( c2, 300, 100));
+	c3.addTrajectory(new $can.Trajectory( c3, 320, 20));
+	c4.addTrajectory(new $can.Trajectory( c4, 100, 380));
+	c5.addTrajectory(new $can.Trajectory( c5, 30, 10));
+	c6.addTrajectory(new $can.Trajectory( c6, 30, 220));
 	
+	$('#animate').on("click", function(){
+		RUNNING = RUNNING ? false : true;
+		animate();
+	});
+
+	$('#snapshot').on('click', function(){
+		takeSnap();
+	});
 	
 });
 

@@ -2,6 +2,13 @@
 
 	var canvasHelp;
 
+	var windowToCanvas = function(canvas, x, y) {
+		var bbox = canvas.getBoundingClientRect(); 
+		return { x: x - bbox.left * (canvas.width / bbox.width),
+				 y: y - bbox.top * (canvas.height / bbox.height)
+			   };
+	};
+
 	var getContext = function(canvasId) {
 		var canvas = document.getElementById(canvasId);
 		////////////////////////////////////////////////////////////////////////////
@@ -19,6 +26,11 @@
 		}
 		return canvas.getContext('2d');
 	};
+
+	var inherit = function( Child, Parent ){
+		Child.prototype = new Parent();
+	};
+
 	var drawLine = function( ctx, line ) { 
 		ctx.beginPath();
 		ctx.moveTo(line.start.x, line.start.y);
@@ -28,6 +40,68 @@
 		ctx.strokeStyle = line.strokeStyle || '#000000';
 		ctx.stroke();
 		ctx.closePath();
+	};
+
+	var Trajectory = function ( object, dX, dY){
+
+		this.object = object;
+		this.dX = dX;
+		this.dY = dY;
+		this.vX = this.object.x < dX ? 5 : -5;
+		this.vY = this.object.y < dY ? 5 : -5;
+
+		return this;
+	};
+
+	var Shape = function () {
+
+		Shape.prototype.updateTrajectory = function(){
+			var t = this.trajectory;
+			var nextX_Inc = this.x + t.vX;
+			var nextY_Inc = this.y + t.vY;
+			var xDone;  
+			var yDone;
+
+			//update x
+			if(t.vX < 0){//moving left
+				if( nextX_Inc < t.dX ){
+					this.x =  t.dX;
+
+				}else if(this.x > t.dX){
+					this.x += t.vX;
+				}
+				 
+			}else{//moving right
+				if( nextX_Inc > t.dX ){
+					this.x = t.dX;
+				}else if( nextX_Inc < t.dX ){
+					this.x += t.vX;
+				}
+			}
+
+			//update y
+			if(t.vY < 0){//moving up
+				if( nextY_Inc < t.dY ){
+					this.y = t.dY;
+				}else if( nextY_Inc > t.dY ){
+					this.y += t.dY;
+				}
+			}else{//moving down
+				if( nextY_Inc > t.dY ){
+					this.y = t.dY;
+				}else if( nextY_Inc < t.dY){
+					this.y += t.dY;
+				}
+			}
+
+			xDone = t.dX == this.x ? true : false;
+			yDone = t.dY == this.y ? true : false;
+
+			if(xDone && yDone){
+				t = false;
+			}
+
+		};
 	};
 
 	var Point = function( x, y ) {
@@ -54,13 +128,32 @@
 
 		this.start = start;
 		this.end = end;
-	}
+	};
+
+	var Circle =  function( x, y, radius, fillStyle ){
+		this.x = x;
+		this.y = y;
+		this.radius = radius;
+		this.fillStyle = fillStyle;
+		this.trajectory = false;
+
+		this.addTrajectory = function(trajectory){
+			this.trajectory = trajectory;
+		};
+
+		return this;
+	};
+
+	inherit(Circle, Shape);
 
 	canvasHelp = {
 		getContext : getContext,
+		windowToCanvas : windowToCanvas,
 		drawLine : drawLine, 
 		Point : Point, 
-		Line : Line
+		Line : Line, 
+		Circle : Circle,
+		Trajectory : Trajectory
 	};
 
 	window.canvasHelp = $can = canvasHelp;
