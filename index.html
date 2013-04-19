@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	 <script src="js/libs/jquery-1.9.1.min.js"></script>
 	 <script src="canvasHelp.js"></script>
 	 <style type="text/css">
 	 	body {
@@ -141,11 +141,6 @@ $(function(){
 	c7.addTrajectory(new $can.Trajectory( c7, 10, 30));
 	c8.addTrajectory(new $can.Trajectory( c8, 160, 50));
 	c9.addTrajectory(new $can.Trajectory( c9, 10, 70));
-	
-	$('#animate').on("click", function(){
-		RUNNING = RUNNING ? false : true;
-		animate();
-	});
 
 	$('#snapshot').on('click', function(){
 		takeSnap();

@@ -188,7 +188,6 @@
 	};
 
 	canvasHelp = {
-		canvases : canvases,
 		getContext : getContext,
 		windowToCanvas : windowToCanvas,
 		drawLine : drawLine, 
