@@ -45,32 +45,18 @@ $(function(){
 	var BG_COLOR = "orange";
 	var circles = [];
 
-	var drawBackground = function(){
-		ctx.fillStyle = BG_COLOR;
-		ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-	};
-
-
-	var x = new $can.Point(0,0);
-	var y = new $can.Point(300,150);
-	var line = $can.Line(x, y, { strokeStyle :'#05ea45'});
-
-	/*
-
-	var gradient = ctx.createLinearGradient(0,0, canvas.width, 0);
-	gradient.addColorStop(0, '#000000');
-	gradient.addColorStop(0.5, '#ffffff');
-	gradient.addColorStop(1, '#000000');
-
-	ctx.fillStyle = gradient;
-	ctx.fillRect(0,0, canvas.width, canvas.height);
-
-	$can.drawLine(ctx, line);
-	*/
-
 	$('#jasonCanvas').on('mousemove', function(e){
 		var canvasPoint = $can.windowToCanvas(ctx.canvas, e.pageX, e.pageY);
 		$('.canvas-coords').html( canvasPoint.x + ", " + canvasPoint.y);
+	});
+
+	$('#jasonCanvas').on('click', function(e){
+		var canvasPoint = $can.windowToCanvas(ctx.canvas, e.pageX, e.pageY);
+		$can.isPointInPath('jasonCanvas', canvasPoint, function(path){
+			path.strokeStyle = "#ffffff";
+			path.fillStyle = "green";
+			path.lineWidth = 10;
+		});
 	});
 
 	var takeSnap = function(){
@@ -86,16 +72,6 @@ $(function(){
 			c.draw(ctx);
 		}
 	};
-
-	/*var animate = function(){
-		if(RUNNING){
-			updateCircles();
-			ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-			drawBackground(ctx);
-			drawCircles(ctx);
-			setTimeout(animate, 30);
-		}
-	};*/
 
 	var updateCircles = function(){
 		for(var i = 0; i < circles.length; i++){
@@ -129,6 +105,7 @@ $(function(){
 		t = new $can.Trajectory( c, x, y);
 		c.addTrajectory(t);
 		c.addToCanvas('jasonCanvas');
+		window.c = c;
 	}
 
 	$can.animate('jasonCanvas');

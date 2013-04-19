@@ -4,6 +4,12 @@
 
 	var canvasList = {};
 
+	var hiddenCtx = (function(){//cc == calculating context
+		var canvas = document.createElement('canvas');
+		var ctx = canvas.getContext('2d');
+		return ctx;
+	})();
+
 	var windowToCanvas = function(canvas, x, y) {
 		var bbox = canvas.getBoundingClientRect(); 
 		return { x: x - bbox.left * (canvas.width / bbox.width),
@@ -33,7 +39,6 @@
 									  "objects" : [],
 									  "RUNNING" : false 
 									};
-
 			return ctx;
 		}else{
 			return null;
@@ -42,6 +47,25 @@
 
 	var inherit = function( Child, Parent ){
 		Child.prototype = new Parent();
+	};
+
+	var isPointInPath = function( canvasId, point, callBack ){
+		var objects = canvasList[canvasId].objects;
+		var isHit;
+		var hc = hiddenCtx;
+		var i = 0;
+		var len = objects.length;
+		//draw on hidden canvas to avoid 
+		//conflicts with current animation drawing
+		hc.canvas.width = canvasList[canvasId].context.canvas.width;
+		hc.canvas.height = canvasList[canvasId].context.canvas.height;
+		hc.clearRect(0, 0, hc.canvas.width, hc.canvas.height);
+		for(i; i < len; i++){
+			objects[i].draw(hc);
+			if(hc.isPointInPath(point.x, point.y)){
+				callBack(objects[i]);
+			}
+		}
 	};
 
 	var drawLine = function( ctx, line ) { 
@@ -154,10 +178,15 @@
 		this.trajectory = false;
 
 		this.draw = function ( ctx ) {
-			ctx.fillStyle = this.fillStyle;
+
+			if(this.fillStyle){ ctx.fillStyle = this.fillStyle; }
+			if(this.strokeStyle){ ctx.strokeStyle = this.strokeStyle; }
+			if(this.lineWidth){ ctx.lineWidth = this.lineWidth; }
 			ctx.beginPath();
 			ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2, false);
-			ctx.fill();
+			
+			this.fillStyle ? ctx.fill() : '';
+			this.strokeStyle ? ctx.stroke() : '';
 		};
 
 		this.addTrajectory = function(trajectory){
@@ -195,6 +224,7 @@
 		}
 
 		ctx.restore();
+		console.log('drew canvas');
 	};
 
 	var animate = function(canvasId) {
@@ -204,8 +234,6 @@
 			updateObjects(ctx);
 			ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 			drawCanvas(canvasId);
-			//drawBackground(ctx);
-			//drawCircles(ctx);
 		}
 		setTimeout(function(){ $can.animate(canvasId); }, 30);
 	};
@@ -214,7 +242,7 @@
 		canvasList[canvasId].RUNNING = true;
 	};
 
-	var stop = function() {
+	var stop = function(canvasId) {
 		canvasList[canvasId].RUNNING = false;
 	};
 
@@ -228,7 +256,8 @@
 		Trajectory : Trajectory, 
 		animate : animate, 
 		start : start, 
-		stop : stop
+		stop : stop, 
+		isPointInPath : isPointInPath
 	};
 
 	window.canvasHelp = $can = canvasHelp;
