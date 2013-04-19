@@ -53,55 +53,54 @@
 		return this;
 	};
 
-	var Shape = function () {
+	var Shape = function () {};
 
-		Shape.prototype.updateTrajectory = function(){
-			var t = this.trajectory;
-			var nextX_Inc = this.x + t.vX;
-			var nextY_Inc = this.y + t.vY;
-			var xDone;  
-			var yDone;
+	Shape.prototype.updateTrajectory = function(){
+		var t = this.trajectory;
+		var nextX_Inc = this.x + t.vX;
+		var nextY_Inc = this.y + t.vY;
+		var xDone;  
+		var yDone;
 
-			//update x
-			if(t.vX < 0){//moving left
-				if( nextX_Inc < t.dX ){
-					this.x =  t.dX;
+		//update x
+		if(t.vX < 0){//moving left
+			if( nextX_Inc < t.dX ){
+				this.x =  t.dX;
 
-				}else if(this.x > t.dX){
-					this.x += t.vX;
-				}
-				 
-			}else{//moving right
-				if( nextX_Inc > t.dX ){
-					this.x = t.dX;
-				}else if( nextX_Inc < t.dX ){
-					this.x += t.vX;
-				}
+			}else if(this.x > t.dX){
+				this.x += t.vX;
 			}
-
-			//update y
-			if(t.vY < 0){//moving up
-				if( nextY_Inc < t.dY ){
-					this.y = t.dY;
-				}else if( nextY_Inc > t.dY ){
-					this.y += t.dY;
-				}
-			}else{//moving down
-				if( nextY_Inc > t.dY ){
-					this.y = t.dY;
-				}else if( nextY_Inc < t.dY){
-					this.y += t.dY;
-				}
+			 
+		}else{//moving right
+			if( nextX_Inc > t.dX ){
+				this.x = t.dX;
+			}else if( nextX_Inc < t.dX ){
+				this.x += t.vX;
 			}
+		}
 
-			xDone = t.dX == this.x ? true : false;
-			yDone = t.dY == this.y ? true : false;
-
-			if(xDone && yDone){
-				t = false;
+		//update y
+		if(t.vY < 0){//moving up
+			if( nextY_Inc < t.dY ){
+				this.y = t.dY;
+			}else if( nextY_Inc > t.dY ){
+				this.y += t.dY;
 			}
+		}else{//moving down
+			if( nextY_Inc > t.dY ){
+				this.y = t.dY;
+			}else if( nextY_Inc < t.dY){
+				this.y += t.dY;
+			}
+		}
 
-		};
+		xDone = t.dX == this.x ? true : false;
+		yDone = t.dY == this.y ? true : false;
+
+		if(xDone && yDone){
+			t = false;
+		}
+
 	};
 
 	var Point = function( x, y ) {
@@ -116,7 +115,7 @@
 		if(!(this instanceof Line)){
 			return new canvasHelp.Line( start, end, options);
 		}
-
+		
 		if(options){
 			for(prop in options){
 				if(options.hasOwnProperty(prop)){
