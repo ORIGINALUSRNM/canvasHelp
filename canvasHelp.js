@@ -30,7 +30,8 @@
 			}
 			ctx = canvas.getContext('2d');
 			canvasList[canvas.id] = { "context" : ctx,
-									  "objects" : [] 
+									  "objects" : [],
+									  "RUNNING" : false 
 									};
 
 			return ctx;
@@ -115,6 +116,10 @@
 
 	};
 
+	Shape.prototype.addToCanvas = function( canvasId ){
+		canvasList[canvasId].objects.push(this);
+	};
+
 	var Point = function( x, y ) {
 		if(!(this instanceof Point)){
 			return new canvasHelp.Point( x, y ); 
@@ -149,12 +154,10 @@
 		this.trajectory = false;
 
 		this.draw = function ( ctx ) {
-			ctx.save();
 			ctx.fillStyle = this.fillStyle;
 			ctx.beginPath();
 			ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2, false);
 			ctx.fill();
-			ctx.restore();
 		};
 
 		this.addTrajectory = function(trajectory){
@@ -177,14 +180,42 @@
 		}
 	};
 
-	var animate = function(ctx) {
-		if(RUNNING){
+	var drawCanvas = function(canvasId) {
+		var ctx = canvasList[canvasId].context;
+		var objects = canvasList[canvasId].objects;
+		var i = 0;
+		var len = objects.length;
+		var object;
+
+		ctx.save();
+
+		for(i; i < len; i++){
+			object = objects[i];
+			object.draw(ctx);
+		}
+
+		ctx.restore();
+	};
+
+	var animate = function(canvasId) {
+		var c = canvasList[canvasId];
+		var ctx = c.context;
+		if(c.RUNNING){
 			updateObjects(ctx);
 			ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+			drawCanvas(canvasId);
 			//drawBackground(ctx);
 			//drawCircles(ctx);
-			//setTimeout(animate, 30);
 		}
+		setTimeout(function(){ $can.animate(canvasId); }, 30);
+	};
+
+	var start = function(canvasId) {
+		canvasList[canvasId].RUNNING = true;
+	};
+
+	var stop = function() {
+		canvasList[canvasId].RUNNING = false;
 	};
 
 	canvasHelp = {
@@ -194,7 +225,10 @@
 		Point : Point, 
 		Line : Line, 
 		Circle : Circle,
-		Trajectory : Trajectory
+		Trajectory : Trajectory, 
+		animate : animate, 
+		start : start, 
+		stop : stop
 	};
 
 	window.canvasHelp = $can = canvasHelp;
